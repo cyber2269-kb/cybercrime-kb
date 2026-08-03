@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사건파일: 리딩방 투자사기 체험</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14161c;
+    --bg-soft: #1b1e26;
+    --paper: #f2ede1;
+    --paper-dim: #e5ddc9;
+    --ink: #201d16;
+    --line: #33363f;
+    --amber: #ffb020;
+    --alert: #ff5a3c;
+    --safe: #6fd3a8;
+    --teal: #4a7c94;
+    --text: #e9e6dd;
+    --text-dim: #9a9a92;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Noto Sans KR', sans-serif;
+    --display: 'Black Han Sans', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--amber); color:#14161c;}
+
+  /* ---------- Risk meter (fixed) ---------- */
+  #riskbar{
+    position:fixed; top:0; left:0; right:0; height:5px; z-index:200;
+    background:var(--line);
+  }
+  #riskfill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg, var(--safe), var(--amber), var(--alert));
+    transition:width .6s ease;
+  }
+  #riskbadge{
+    position:fixed; top:14px; right:16px; z-index:200;
+    font-family:var(--mono); font-size:11px; letter-spacing:.05em;
+    background:var(--bg-soft); border:1px solid var(--line);
+    padding:8px 12px; border-radius:3px; text-align:right;
+    color:var(--text-dim);
+  }
+  #riskbadge b{display:block; color:var(--alert); font-size:15px; margin-top:2px;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:80px 8vw 60px; position:relative;
+    background:
+      radial-gradient(ellipse at 15% 20%, rgba(255,90,60,.08), transparent 45%),
+      radial-gradient(ellipse at 85% 80%, rgba(74,124,148,.10), transparent 50%),
+      var(--bg);
+    border-bottom:1px solid var(--line);
+  }
+  .case-stamp{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:var(--mono); font-size:12px; letter-spacing:.15em;
+    color:var(--alert); border:1px solid var(--alert);
+    padding:6px 12px; border-radius:2px; width:fit-content;
+    transform:rotate(-2deg); margin-bottom:28px;
+  }
+  .case-stamp::before{content:'●'; font-size:8px;}
+  .hero h1{
+    font-family:var(--display); font-weight:400;
+    font-size:clamp(38px, 6.4vw, 84px); line-height:1.05;
+    letter-spacing:-.01em; max-width:900px;
+  }
+  .hero h1 span{color:var(--amber);}
+  .hero .meta-row{
+    display:flex; gap:28px; flex-wrap:wrap; margin-top:32px;
+    font-family:var(--mono); font-size:12px; color:var(--text-dim);
+  }
+  .hero .meta-row div b{color:var(--text); display:block; font-size:14px; margin-top:3px; font-family:var(--sans); font-weight:700;}
+  .hero p.lead{
+    max-width:640px; margin-top:34px; font-size:16.5px; color:#cfcdc4;
+  }
+  .start-btn{
+    margin-top:46px; align-self:flex-start;
+    background:var(--amber); color:#1a1508; border:none;
+    font-family:var(--sans); font-weight:900; font-size:16px;
+    padding:16px 34px; border-radius:2px; cursor:pointer;
+    letter-spacing:-.01em;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .start-btn:hover{transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,176,32,.25);}
+  .start-btn:focus-visible{outline:3px solid var(--text); outline-offset:3px;}
+  .disclaimer{
+    margin-top:20px; font-size:12.5px; color:var(--text-dim); max-width:560px;
+    border-left:2px solid var(--line); padding-left:14px;
+  }
+
+  /* ---------- Stage rail ---------- */
+  .stagewrap{max-width:1040px; margin:0 auto; padding:0 6vw;}
+  section.stage{
+    padding:90px 0 60px; border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.14em;
+    color:var(--amber); display:flex; align-items:center; gap:10px; margin-bottom:14px;
+  }
+  .eyebrow::before{content:''; width:22px; height:1px; background:var(--amber);}
+  .stage h2{
+    font-family:var(--display); font-weight:400; font-size:clamp(26px,3.6vw,42px);
+    margin-bottom:10px; letter-spacing:-.01em;
+  }
+  .stage .desc{color:var(--text-dim); max-width:600px; font-size:15px; margin-bottom:40px;}
+
+  /* ---------- phone mockup ---------- */
+  .phone{
+    width:min(380px, 100%); background:#0e0f13; border:1px solid var(--line);
+    border-radius:22px; padding:10px; box-shadow:0 30px 60px -20px rgba(0,0,0,.6);
+  }
+  .phone-screen{
+    background:var(--paper); border-radius:14px; overflow:hidden;
+    min-height:420px; display:flex; flex-direction:column;
+  }
+  .phone-header{
+    background:var(--paper-dim); padding:14px 16px; display:flex; align-items:center; gap:10px;
+    border-bottom:1px solid #d8cfb6; font-family:var(--sans); font-weight:700; font-size:13px; color:var(--ink);
+  }
+  .phone-header .dot{width:8px;height:8px;border-radius:50%; background:var(--safe);}
+  .msgs{padding:16px 14px; display:flex; flex-direction:column; gap:10px; flex:1;}
+  .bubble{
+    max-width:82%; padding:10px 13px; border-radius:14px; font-size:13.5px;
+    color:var(--ink); position:relative; opacity:0; transform:translateY(8px);
+    animation:pop .35s ease forwards;
+    cursor:default;
+  }
+  .bubble.them{align-self:flex-start; background:#fff; border:1px solid #e4dcc4; border-bottom-left-radius:3px;}
+  .bubble.me{align-self:flex-end; background:var(--amber); border-bottom-right-radius:3px; color:#1a1508; font-weight:600;}
+  .bubble.sys{align-self:center; background:transparent; color:#8c8672; font-size:11.5px; font-family:var(--mono);}
+  .bubble.flag{cursor:pointer; border:1.5px dashed var(--alert);}
+  .bubble.flag::after{
+    content:'🚩'; position:absolute; top:-9px; right:-9px; font-size:14px;
+    background:var(--alert); width:20px; height:20px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:10px;
+    animation:pulse 1.6s infinite;
+  }
+  .bubble.flag.opened{border-style:solid; border-color:var(--safe);}
+  .bubble.flag.opened::after{content:'✓'; background:var(--safe); animation:none;}
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+  @keyframes pop{to{opacity:1; transform:translateY(0);}}
+
+  .next-msg-btn, .stage-next-btn{
+    margin-top:14px; background:var(--bg-soft); color:var(--text);
+    border:1px solid var(--line); font-family:var(--mono); font-size:12px;
+    padding:10px 16px; border-radius:2px; cursor:pointer; letter-spacing:.03em;
+  }
+  .next-msg-btn:hover, .stage-next-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .next-msg-btn:disabled{opacity:0; pointer-events:none;}
+
+  /* flag explanation card */
+  .flagpanel{
+    margin-top:26px; display:flex; flex-direction:column; gap:12px;
+  }
+  .flagcard{
+    background:var(--bg-soft); border:1px solid var(--line); border-left:3px solid var(--alert);
+    padding:14px 16px; border-radius:2px; display:none; font-size:13.5px; color:#d9d6cc;
+  }
+  .flagcard.show{display:block;}
+  .flagcard b{color:var(--alert); display:block; font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; margin-bottom:4px;}
+
+  .investigator-note{
+    margin-top:30px; background:var(--paper); color:var(--ink); padding:18px 20px;
+    border-radius:2px; font-size:13.5px; max-width:600px; position:relative;
+    transform:rotate(-.4deg); box-shadow:0 12px 24px -10px rgba(0,0,0,.4);
+    display:none;
+  }
+  .investigator-note.show{display:block;}
+  .investigator-note .tag{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:#8c3b2a;
+    display:block; margin-bottom:6px; font-weight:600;
+  }
+
+  .stage-layout{display:flex; gap:48px; flex-wrap:wrap; align-items:flex-start;}
+  .stage-side{flex:1; min-width:260px; padding-top:6px;}
+
+  .fake-chart{
+    margin-top:10px; background:#0e0f13; border:1px solid var(--line); border-radius:4px; padding:14px;
+    font-family:var(--mono);
+  }
+  .fake-chart .num{font-size:28px; color:var(--safe); font-weight:600;}
+  .fake-chart .label{font-size:11px; color:var(--text-dim); letter-spacing:.05em;}
+  .fake-chart svg{margin-top:10px; width:100%; height:60px; display:block;}
+
+  /* ---------- Ending ---------- */
+  .ending{
+    background:linear-gradient(180deg, var(--bg) 0%, #1c0e0a 100%);
+    padding:100px 0 80px; border-bottom:1px solid var(--line);
+  }
+  .ending .stagewrap h2{color:var(--alert);}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px; background:var(--line); margin-top:40px; border:1px solid var(--line);}
+  .stat-cell{background:var(--bg); padding:26px 20px;}
+  .stat-cell .n{font-family:var(--mono); font-size:30px; color:var(--amber); font-weight:600;}
+  .stat-cell .t{font-size:12.5px; color:var(--text-dim); margin-top:6px;}
+  .stat-source{font-size:11px; color:var(--text-dim); margin-top:14px; font-family:var(--mono);}
+
+  /* ---------- checklist ---------- */
+  .checklist{padding:90px 0 100px;}
+  .check-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:36px;}
+  .check-item{
+    background:var(--bg-soft); border:1px solid var(--line); padding:20px; border-radius:3px;
+  }
+  .check-item .no{font-family:var(--mono); color:var(--amber); font-size:12px; letter-spacing:.1em;}
+  .check-item h3{font-size:16px; margin:8px 0 6px; font-weight:700;}
+  .check-item p{font-size:13.5px; color:var(--text-dim);}
+
+  .report-box{
+    margin-top:50px; background:var(--paper); color:var(--ink); border-radius:4px; padding:30px 34px;
+  }
+  .report-box h3{font-family:var(--display); font-weight:400; font-size:22px; margin-bottom:14px;}
+  .report-lines{display:flex; gap:40px; flex-wrap:wrap; font-family:var(--mono);}
+  .report-lines div b{display:block; font-size:24px; color:#8c3b2a;}
+  .report-lines div span{font-size:12px; color:#5a5646;}
+
+  footer{padding:34px 6vw 50px; text-align:center; color:var(--text-dim); font-size:12px; font-family:var(--mono);}
+
+  @media (max-width:640px){
+    .hero{padding:70px 6vw 50px;}
+    section.stage{padding:60px 0 40px;}
+    .stage-layout{gap:28px;}
+  }
+  [hidden]{display:none !important;}
+</style>
+</head>
+<body>
+
+<div id="riskbar"><div id="riskfill"></div></div>
+<div id="riskbadge">위험도<b id="riskval">0%</b></div>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="case-stamp">CASE FILE · OPEN-2026-0417</div>
+  <h1>리딩방<br><span>투자사기</span> 체험</h1>
+  <div class="meta-row">
+    <div>유형<b>주식 리딩방 / 원금 편취형</b></div>
+    <div>진행 단계<b>6단계</b></div>
+    <div>소요 시간<b>약 5분</b></div>
+  </div>
+  <p class="lead">
+    실제 신고 사례를 재구성한 가상의 대화입니다. 접근부터 신뢰 형성, 소액 성공 체험, 추가 투자 유도,
+    출금 거부, 잠적까지 — 사기가 어떤 순서로 진행되는지 대화창을 직접 넘겨보며 확인하세요.
+    말풍선에 🚩 표시가 뜨면 클릭해서 어떤 신호였는지 확인할 수 있습니다.
+  </p>
+  <button class="start-btn" onclick="document.getElementById('stage1').scrollIntoView()">체험 시작하기</button>
+  <p class="disclaimer">
+    ※ 등장인물, 대화, 계좌 정보는 모두 가상이며 실존 인물·기관과 무관합니다.
+    이 자료는 사기 수법 인지 및 피해 예방 교육 목적으로 제작되었습니다.
+  </p>
+</section>
+
+<div class="stagewrap">
+
+<!-- ================= STAGE 1 ================= -->
+<section class="stage" id="stage1">
+  <div class="eyebrow">STAGE 01 · 접근</div>
+  <h2>"그냥 오픈채팅방 초대였는데"</h2>
+  <p class="desc">무료 리딩방, 종목 정보 공유방 등으로 위장해 다수에게 접근합니다. 시작은 언제나 부담 없는 제안입니다.</p>
+
+  <div class="stage-layout">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="phone-header"><span class="dot"></span> 무료 종목 정보방 (참여자 1,204명)</div>
+        <div class="msgs" id="msgs-1"></div>
+        <div style="padding:0 14px 14px;">
+          <button class="next-msg-btn" id="next-1" onclick="nextMsg(1)">다음 메시지 보기 →</button>
+        </div>
+      </div>
+    </div>
+    <div class="stage-side">
+      <div class="flagpanel" id="flagpanel-1"></div>
+      <div class="investigator-note" id="note-1">
+        <span class="tag">수사관 노트</span>
+        참여자 수, 실시간 인증 화면, "선착순" 같은 문구는 신뢰도를 조작하기 위한 장치입니다.
+        실제 회원 수가 아니라 조작된 숫자인 경우가 대부분입니다.
+      </div>
+      <button class="stage-next-btn" id="go-2" hidden onclick="goStage(2)">STAGE 02 로 이동 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STAGE 2 ================= -->
+<section class="stage" id="stage2" hidden>
+  <div class="eyebrow">STAGE 02 · 신뢰 형성</div>
+  <h2>"애널리스트 출신이라던데"</h2>
+  <p class="desc">전문가 이력, 방송 출연 경력, 자격증 사진 등을 내세워 권위를 만듭니다. 무료 정보로 먼저 호감을 삽니다.</p>
+
+  <div class="stage-layout">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="phone-header"><span class="dot"></span> 김OO 수석 (1:1 대화)</div>
+        <div class="msgs" id="msgs-2"></div>
+        <div style="padding:0 14px 14px;">
+          <button class="next-msg-btn" id="next-2" onclick="nextMsg(2)">다음 메시지 보기 →</button>
+        </div>
+      </div>
+    </div>
+    <div class="stage-side">
+      <div class="flagpanel" id="flagpanel-2"></div>
+      <div class="investigator-note" id="note-2">
+        <span class="tag">수사관 노트</span>
+        "증권사 출신", "전 애널리스트" 같은 이력은 대부분 검증되지 않습니다.
+        금융투자업자인지는 반드시 금융감독원 파인(fine.fss.or.kr)에서 직접 조회해야 합니다.
+      </div>
+      <button class="stage-next-btn" id="go-3" hidden onclick="goStage(3)">STAGE 03 로 이동 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STAGE 3 ================= -->
+<section class="stage" id="stage3" hidden>
+  <div class="eyebrow">STAGE 03 · 소액 성공 체험</div>
+  <h2>"진짜 30만 원이 82만 원이 됐다"</h2>
+  <p class="desc">소액으로 실제 수익을 경험하게 하거나, 가짜 HTS 화면으로 수익을 보여줍니다. 의심을 걷어내는 결정적 단계입니다.</p>
+
+  <div class="stage-layout">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="phone-header"><span class="dot"></span> 김OO 수석 (1:1 대화)</div>
+        <div class="msgs" id="msgs-3"></div>
+        <div style="padding:0 14px 14px;">
+          <button class="next-msg-btn" id="next-3" onclick="nextMsg(3)">다음 메시지 보기 →</button>
+        </div>
+      </div>
+    </div>
+    <div class="stage-side">
+      <div class="fake-chart">
+        <div class="label">모의 수익 인증 화면 (조작됨)</div>
+        <div class="num">+173.4%</div>
+        <svg viewBox="0 0 300 60"><polyline points="0,50 40,45 80,48 120,30 160,35 200,15 240,20 300,5" fill="none" stroke="#6fd3a8" stroke-width="2"/></svg>
+      </div>
+      <div class="flagpanel" id="flagpanel-3"></div>
+      <div class="investigator-note" id="note-3">
+        <span class="tag">수사관 노트</span>
+        가짜 HTS·앱 화면은 실제 증권사 시스템과 무관하게 자체 제작된 웹페이지인 경우가 많습니다.
+        입금 즉시 실제 매매가 이뤄지지 않는다는 점이 핵심입니다.
+      </div>
+      <button class="stage-next-btn" id="go-4" hidden onclick="goStage(4)">STAGE 04 로 이동 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STAGE 4 ================= -->
+<section class="stage" id="stage4" hidden>
+  <div class="eyebrow">STAGE 04 · 추가 투자 유도</div>
+  <h2>"이번엔 진짜 인생 마지막 기회"</h2>
+  <p class="desc">"이번 한 번만", "곧 상한가"라며 긴급함을 조성하고, 더 큰 금액을 요구합니다. 대출을 권유하기도 합니다.</p>
+
+  <div class="stage-layout">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="phone-header"><span class="dot"></span> 김OO 수석 (1:1 대화)</div>
+        <div class="msgs" id="msgs-4"></div>
+        <div style="padding:0 14px 14px;">
+          <button class="next-msg-btn" id="next-4" onclick="nextMsg(4)">다음 메시지 보기 →</button>
+        </div>
+      </div>
+    </div>
+    <div class="stage-side">
+      <div class="flagpanel" id="flagpanel-4"></div>
+      <div class="investigator-note" id="note-4">
+        <span class="tag">수사관 노트</span>
+        "지금 아니면 안 된다"는 압박은 판단할 시간을 뺏기 위한 전형적 수법입니다.
+        대출까지 권유한다면 100% 사기로 판단해도 됩니다.
+      </div>
+      <button class="stage-next-btn" id="go-5" hidden onclick="goStage(5)">STAGE 05 로 이동 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STAGE 5 ================= -->
+<section class="stage" id="stage5" hidden>
+  <div class="eyebrow">STAGE 05 · 출금 거부</div>
+  <h2>"세금 먼저 내셔야 출금돼요"</h2>
+  <p class="desc">막상 출금을 시도하면 각종 명목의 추가 입금을 요구합니다. 이 단계에서 대부분 사기임을 인지하지만, 이미 늦은 경우가 많습니다.</p>
+
+  <div class="stage-layout">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="phone-header"><span class="dot"></span> 고객센터 (자동 응답)</div>
+        <div class="msgs" id="msgs-5"></div>
+        <div style="padding:0 14px 14px;">
+          <button class="next-msg-btn" id="next-5" onclick="nextMsg(5)">다음 메시지 보기 →</button>
+        </div>
+      </div>
+    </div>
+    <div class="stage-side">
+      <div class="flagpanel" id="flagpanel-5"></div>
+      <div class="investigator-note" id="note-5">
+        <span class="tag">수사관 노트</span>
+        정상적인 증권사·거래소는 출금 조건으로 세금이나 수수료의 별도 선입금을 요구하지 않습니다.
+        이런 요구 자체가 사기의 명백한 증거입니다.
+      </div>
+      <button class="stage-next-btn" id="go-end" hidden onclick="goStage('end')">결말 확인하기 →</button>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<!-- ================= ENDING ================= -->
+<section class="ending" id="stageend" hidden>
+  <div class="stagewrap">
+    <div class="eyebrow" style="color:var(--alert);">STAGE 06 · 결말</div>
+    <h2>대화방이 사라졌습니다</h2>
+    <p class="desc" style="color:#d9c9c2;">며칠 뒤 오픈채팅방과 상담원 계정이 모두 삭제됩니다. 입금한 계좌는 이미 다수의 '대포통장'을 거쳐 추적이 어려운 상태입니다.</p>
+
+    <div class="stat-grid">
+      <div class="stat-cell"><div class="n">1위</div><div class="t">유형별 피해 건수 1위, 리딩방·투자 사칭형 사기</div></div>
+      <div class="stat-cell"><div class="n">↑</div><div class="t">최근 몇 년간 지속적으로 증가하는 추세</div></div>
+      <div class="stat-cell"><div class="n">SNS</div><div class="t">오픈채팅·SNS·문자를 통한 무작위 접근이 대다수</div></div>
+      <div class="stat-cell"><div class="n">0건</div><div class="t">정상 금융투자업자는 텔레그램·오픈채팅으로 1:1 투자금을 받지 않음</div></div>
+    </div>
+    <div class="stat-source">※ 구체적 수치는 매년 갱신되므로, 최신 통계는 경찰청·금융감독원 발표 자료를 확인하세요.</div>
+  </div>
+</section>
+
+<!-- ================= CHECKLIST ================= -->
+<section class="checklist">
+  <div class="stagewrap">
+    <div class="eyebrow">DEBRIEF</div>
+    <h2 style="font-family:var(--display); font-weight:400; font-size:clamp(24px,3.2vw,36px);">6단계에서 놓치지 말아야 할 신호</h2>
+
+    <div class="check-grid">
+      <div class="check-item"><span class="no">01</span><h3>제도권 여부 미확인</h3><p>금융감독원 파인에서 정식 investment advisor(투자자문업자) 등록 여부를 확인하지 않고 정보를 믿음</p></div>
+      <div class="check-item"><span class="no">02</span><h3>조작된 신뢰 지표</h3><p>참여자 수, 실시간 수익 인증, 방송 출연 경력이 검증 없이 제시됨</p></div>
+      <div class="check-item"><span class="no">03</span><h3>비정상적 수익률</h3><p>단기간에 100%를 넘는 수익률을 제시하며 소액으로 체험시킴</p></div>
+      <div class="check-item"><span class="no">04</span><h3>시간 압박</h3><p>"오늘까지만", "곧 상한가"라며 충분히 생각할 시간을 주지 않음</p></div>
+      <div class="check-item"><span class="no">05</span><h3>대출 권유</h3><p>투자금이 부족하면 대출을 받아서라도 넣으라고 권유함</p></div>
+      <div class="check-item"><span class="no">06</span><h3>출금 시 추가 입금 요구</h3><p>세금, 수수료, 보증금 등의 명목으로 출금 전 추가 납부를 요구함</p></div>
+    </div>
+
+    <div class="report-box">
+      <h3>이미 입금했거나, 의심되는 상황이라면</h3>
+      <div class="report-lines">
+        <div><b>112 / 182</b><span>경찰청 사이버범죄 신고 · 상담</span></div>
+        <div><b>1332</b><span>금융감독원 불법사금융·개인정보 침해 신고센터</span></div>
+        <div><b>은행 콜센터</b><span>입금 계좌 지급정지 즉시 요청</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  CASE FILE OPEN-2026-0417 · 본 콘텐츠는 사기 예방 교육 목적의 가상 시나리오입니다 · 실제 신고는 112 또는 182
+</footer>
+
+<script>
+const data = {
+  1: [
+    {who:'them', text:'[공지] 무료 종목 정보방 개설! 실시간 인증방 · 선착순 마감 임박'},
+    {who:'sys', text:'참여자 1,204명 · 방금 47명 입장'},
+    {who:'them', text:'안녕하세요 여러분 오늘도 좋은 종목 하나 알려드릴게요 :)', flag:'과도한 참여자 수와 "선착순" 문구는 신뢰도를 부풀리기 위한 연출입니다. 실제 인원과 무관하게 조작되는 경우가 많습니다.'},
+    {who:'me', text:'혹시 저도 상담 가능한가요?'},
+    {who:'them', text:'네 물론이죠! 1:1로 자세히 안내드릴게요, 성함이랑 투자 경험 알려주실 수 있을까요?', flag:'개인 대화로의 유도가 시작되는 지점입니다. 공개방에서 사적인 대화로 옮겨가는 순간부터 표적화가 시작됩니다.'},
+  ],
+  2: [
+    {who:'them', text:'안녕하세요, 담당 애널리스트 김OO 수석입니다. 증권사 리서치센터 출신이고 방송 출연도 여러 번 했어요.', flag:'경력·이력은 이 대화만으로는 전혀 검증되지 않습니다. 금융감독원 파인(fine.fss.or.kr)에서 등록 여부를 직접 조회해야 합니다.'},
+    {who:'them', text:'오늘은 무료로 급등 예상 종목 하나만 알려드릴게요, 부담 갖지 마세요'},
+    {who:'me', text:'감사합니다! 정말 오를까요?'},
+    {who:'them', text:'저희 리딩 받으신 분들 이번 달 평균 수익률 87% 나왔어요, 캡처 보내드릴게요', flag:'검증 불가능한 "평균 수익률" 수치를 근거 없이 제시합니다. 캡처 화면도 자체 제작된 이미지일 수 있습니다.'},
+  ],
+  3: [
+    {who:'them', text:'일단 소액으로 한번 해보세요, 30만 원 정도면 부담 없으실 거예요'},
+    {who:'me', text:'네 한번 해볼게요'},
+    {who:'them', text:'전용 앱으로 입금하시면 제가 직접 매수 타이밍 알려드릴게요', flag:'"전용 앱"은 실제 증권사와 무관한 자체 제작 웹/앱인 경우가 대부분입니다. 정상 거래소를 통하지 않는 거래는 그 자체로 위험 신호입니다.'},
+    {who:'sys', text:'3일 후'},
+    {who:'them', text:'짜잔 확인해보세요! 82만 원 됐죠? 이제 좀 믿으시겠어요?', flag:'짧은 기간의 비정상적 고수익은 신뢰를 얻기 위한 미끼입니다. 실제로는 출금되지 않는 장부상 숫자인 경우가 많습니다.'},
+  ],
+  4: [
+    {who:'them', text:'이번 정보는 진짜 특급이에요, 상장사 내부 관계자한테 직접 받은 거라 아무한테나 안 드려요'},
+    {who:'them', text:'근데 오늘 오후 3시까지만 진입 가능해요, 이 타이밍 놓치면 다음 기회 없어요', flag:'시간 압박은 사람이 충분히 생각하고 확인할 여유를 없애기 위한 전형적인 수법입니다.'},
+    {who:'me', text:'지금 가진 돈이 별로 없는데...'},
+    {who:'them', text:'마이너스 통장이나 소액 대출도 금방 나와요, 이번 건은 그 이상 버실 수 있어요', flag:'투자금 마련을 위한 대출 권유는 명백한 위험 신호입니다. 정상적인 투자 권유는 대출을 강요하지 않습니다.'},
+  ],
+  5: [
+    {who:'me', text:'수익금 출금하고 싶은데 어떻게 하나요?'},
+    {who:'them', text:'출금 전 세금 22%를 먼저 정산하셔야 해요, 정산금 입금하시면 바로 출금 처리됩니다', flag:'정상적인 금융기관은 출금을 조건으로 세금·수수료의 별도 선입금을 요구하지 않습니다. 이 요구 자체가 사기의 결정적 증거입니다.'},
+    {who:'me', text:'그런 게 어딨어요, 그냥 원금이랑 수익금 다 돌려주세요'},
+    {who:'them', text:'죄송하지만 정산 절차 없이는 출금이 불가능한 시스템이에요, 30분 내로 처리 안 하시면 계정 동결됩니다', flag:'"동결", "블랙리스트" 등 새로운 불안을 조성해 추가 입금을 유도하는 2차 사기 단계입니다.'},
+  ]
+};
+
+let idx = {1:0,2:0,3:0,4:0,5:0};
+let risk = 0;
+
+function updateRisk(v){
+  risk = Math.min(100, risk+v);
+  document.getElementById('riskfill').style.width = risk+'%';
+  document.getElementById('riskval').textContent = risk+'%';
+}
+
+function nextMsg(stage){
+  const arr = data[stage];
+  const i = idx[stage];
+  if(i >= arr.length) return;
+  const m = arr[i];
+  const container = document.getElementById('msgs-'+stage);
+  const b = document.createElement('div');
+  b.className = 'bubble ' + m.who + (m.flag ? ' flag' : '');
+  b.textContent = m.text;
+  if(m.flag){
+    b.onclick = () => openFlag(stage, i, m.flag, b);
+  }
+  container.appendChild(b);
+  container.parentElement.scrollTop = container.scrollHeight;
+  idx[stage]++;
+  if(m.who !== 'sys') updateRisk(3);
+  if(idx[stage] >= arr.length){
+    document.getElementById('next-'+stage).disabled = true;
+    document.getElementById('note-'+stage).classList.add('show');
+    const goBtn = document.getElementById('go-' + (stage===5 ? 'end' : stage+1));
+    if(goBtn) goBtn.hidden = false;
+  }
+}
+
+function openFlag(stage, i, text, el){
+  el.classList.add('opened');
+  el.onclick = null;
+  updateRisk(6);
+  const panel = document.getElementById('flagpanel-'+stage);
+  const card = document.createElement('div');
+  card.className = 'flagcard show';
+  card.innerHTML = '<b>🚩 경고 신호 포착</b>' + text;
+  panel.appendChild(card);
+}
+
+function goStage(n){
+  document.querySelectorAll('section.stage').forEach(s => s.hidden = true);
+  if(n === 'end'){
+    updateRisk(15);
+    const end = document.getElementById('stageend');
+    end.hidden = false;
+    end.scrollIntoView({behavior:'smooth'});
+  } else {
+    const el = document.getElementById('stage'+n);
+    el.hidden = false;
+    el.scrollIntoView({behavior:'smooth'});
+  }
+}
+</script>
+</body>
+</html>
